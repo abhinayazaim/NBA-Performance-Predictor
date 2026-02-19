@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-court-bg text-court-text font-body;
+  }
+
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-court-bg;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-court-border rounded;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-court-muted;
+  }
+}
+
+@layer utilities {
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-\[fadeIn_0\.5s_ease-out_forwards\] {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+}
