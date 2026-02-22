@@ -1,35 +1,31 @@
 import React from 'react';
-import { User, Calendar, Hash } from 'lucide-react';
+import { User, Calendar, Hash, MapPin, Ruler, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { usePlayerIntel } from '../hooks/usePlayer';
 import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 
-// Inlined PlayerIntel to avoid import chain issues
 function PlayerIntel({ playerId }) {
     const { data: intel, isLoading } = usePlayerIntel(playerId);
     const [isOpen, setIsOpen] = React.useState(false);
-
-    if (isLoading || !intel || !intel.facts || intel.facts.length === 0) return null;
-
+    if (isLoading || !intel?.facts?.length) return null;
     return (
-        <div className="mt-4 border border-court-border rounded-lg overflow-hidden bg-court-bg/50">
+        <div className="mt-4 border border-court-border rounded-lg overflow-hidden">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between px-4 py-3 bg-court-surface/30 hover:bg-court-surface/60 transition-colors"
+                className="w-full flex items-center justify-between px-4 py-2.5 bg-court-bg/40 hover:bg-court-bg/70 transition-colors"
             >
                 <div className="flex items-center gap-2">
-                    <Sparkles size={16} className="text-court-orange" />
-                    <span className="font-display tracking-widest text-sm text-court-text">PLAYER INTEL</span>
+                    <Sparkles size={13} className="text-court-orange" />
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-court-subtext">Player Intel</span>
                 </div>
-                {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                {isOpen ? <ChevronUp size={13} className="text-court-muted" /> : <ChevronDown size={13} className="text-court-muted" />}
             </button>
-
             {isOpen && (
-                <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 bg-court-bg/20">
                     {intel.facts.map((fact, idx) => (
-                        <div key={idx} className="border border-court-border rounded px-3 py-2 text-xs flex items-center bg-court-bg">
-                            <span className="text-court-subtext font-mono uppercase tracking-widest mr-2">{fact.label}</span>
-                            <span className="text-court-text font-semibold truncate" title={fact.value}>{fact.value}</span>
+                        <div key={idx} className="flex items-baseline gap-2 px-3 py-2 border border-court-border/50 rounded bg-court-bg/50">
+                            <span className="text-[9px] font-mono uppercase tracking-widest text-court-muted shrink-0">{fact.label}</span>
+                            <span className="text-xs font-mono text-court-text truncate font-medium" title={fact.value}>{fact.value}</span>
                         </div>
                     ))}
                 </div>
@@ -40,128 +36,117 @@ function PlayerIntel({ playerId }) {
 
 export default function PlayerHeader({ profile }) {
     if (!profile) return null;
-
     const { bio, headshot_url, next_game, key_matchup } = profile;
     if (!bio) return null;
-
     const playerId = bio?.PERSON_ID;
 
     return (
-        <div className="bg-court-surface border-b border-court-border p-6 mb-6">
-            <div className="flex flex-col md:flex-row gap-8 items-center md:items-start max-w-7xl mx-auto">
+        <div className="bg-court-surface border border-court-border rounded-xl overflow-hidden mb-2">
+            <div className="h-[2px] bg-court-orange w-full" />
+            <div className="p-6">
+                <div className="flex flex-col md:flex-row gap-6 items-start">
 
-                {/* Headshot */}
-                <Link
-                    to={`/player/${playerId}`}
-                    className="relative w-40 h-40 md:w-48 md:h-48 shrink-0 bg-court-bg rounded-lg border border-court-border overflow-hidden flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer shadow-lg group"
-                >
-                    {headshot_url ? (
-                        <>
-                            <img
-                                src={headshot_url}
-                                alt={bio?.DISPLAY_FIRST_LAST}
-                                className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                                onError={(e) => {
-                                    e.target.style.display = 'none';
-                                    e.target.nextSibling.style.display = 'flex';
-                                }}
-                            />
-                            <div className="absolute inset-0 items-center justify-center hidden">
-                                <User className="w-24 h-24 text-court-subtext" />
-                            </div>
-                        </>
-                    ) : (
-                        <User className="w-24 h-24 text-court-subtext" />
-                    )}
-                </Link>
-
-                {/* Bio */}
-                <div className="flex-1 text-center md:text-left">
-                    <Link to={`/player/${playerId}`} className="hover:text-court-orange transition-colors">
-                        <h1 className="text-5xl font-display text-court-text uppercase mb-2">
-                            {bio?.DISPLAY_FIRST_LAST || 'Unknown Player'}
-                        </h1>
+                    {/* Headshot */}
+                    <Link to={`/player/${playerId}`}
+                        className="relative shrink-0 w-28 h-28 md:w-36 md:h-36 rounded-xl border border-court-border overflow-hidden
+                                   bg-court-bg group hover:border-court-orange transition-all duration-300 shadow-lg">
+                        <img
+                            src={headshot_url}
+                            alt={bio?.DISPLAY_FIRST_LAST}
+                            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                            onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                        />
+                        <div className="absolute inset-0 items-center justify-center hidden bg-court-bg">
+                            <User className="w-16 h-16 text-court-border" />
+                        </div>
                     </Link>
 
-                    <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
-                        <span className="flex items-center gap-2 bg-court-bg px-3 py-1 rounded border border-court-border text-court-subtext font-mono text-sm">
-                            <Hash size={14} /> {bio?.JERSEY || '--'}
-                        </span>
-                        <span className="bg-court-bg px-3 py-1 rounded border border-court-border text-court-orange font-bold tracking-wider text-sm">
-                            {bio?.POSITION || '--'}
-                        </span>
-                        <span className="text-court-text font-medium text-lg">
-                            {bio?.TEAM_NAME} <span className="text-court-subtext">({bio?.TEAM_ABBREVIATION})</span>
-                        </span>
+                    {/* Bio */}
+                    <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <span className="text-[10px] font-mono bg-court-orange/10 text-court-orange border border-court-orange/20 px-2 py-0.5 rounded tracking-widest uppercase">
+                                {bio?.POSITION || '--'}
+                            </span>
+                            <span className="text-[10px] font-mono text-court-muted flex items-center gap-1">
+                                <Hash size={9} />{bio?.JERSEY || '--'}
+                            </span>
+                            {bio?.GREATEST_75_FLAG === 'Y' && (
+                                <span className="text-[9px] font-mono bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 px-2 py-0.5 rounded tracking-widest">
+                                    75TH ANNIVERSARY
+                                </span>
+                            )}
+                        </div>
+
+                        <Link to={`/player/${playerId}`} className="group">
+                            <h1 className="text-3xl md:text-5xl font-display text-court-text uppercase leading-none mb-1 group-hover:text-court-orange transition-colors duration-200">
+                                {bio?.DISPLAY_FIRST_LAST || 'Unknown Player'}
+                            </h1>
+                        </Link>
+
+                        <p className="text-court-subtext font-mono text-sm mb-4">
+                            {bio?.TEAM_CITY} <span className="text-court-text font-semibold">{bio?.TEAM_NAME}</span>
+                            <span className="text-court-border mx-2">·</span>
+                            <span className="text-court-muted">{bio?.TEAM_ABBREVIATION}</span>
+                        </p>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            {[
+                                { label: 'Size', value: `${bio?.HEIGHT} / ${bio?.WEIGHT}lbs` },
+                                { label: 'Experience', value: `${bio?.SEASON_EXP} seasons` },
+                                { label: 'Country', value: bio?.COUNTRY },
+                                { label: 'Draft', value: bio?.DRAFT_YEAR ? `${bio.DRAFT_YEAR} · R${bio.DRAFT_ROUND} P${bio.DRAFT_NUMBER}` : 'Undrafted' },
+                            ].map((item, i) => (
+                                <div key={i} className="bg-court-bg/50 border border-court-border/50 rounded-lg px-3 py-2">
+                                    <span className="block text-[9px] font-mono uppercase tracking-widest text-court-muted mb-0.5">{item.label}</span>
+                                    <span className="text-xs font-mono text-court-subtext">{item.value}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <PlayerIntel playerId={playerId} />
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-court-subtext text-sm font-mono border-t border-court-border pt-4">
-                        <div>
-                            <span className="block text-xs uppercase tracking-widest text-court-muted mb-1">Height/Weight</span>
-                            {bio?.HEIGHT} / {bio?.WEIGHT}
+                    {/* Next Matchup */}
+                    <div className="w-full md:w-52 shrink-0 bg-court-bg border border-court-border rounded-xl overflow-hidden">
+                        <div className="px-4 py-2.5 border-b border-court-border flex items-center gap-2">
+                            <Calendar size={11} className="text-court-orange" />
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-court-orange font-bold">Next Matchup</span>
                         </div>
-                        <div>
-                            <span className="block text-xs uppercase tracking-widest text-court-muted mb-1">Experience</span>
-                            {bio?.SEASON_EXP} Years
-                        </div>
-                        <div>
-                            <span className="block text-xs uppercase tracking-widest text-court-muted mb-1">Country</span>
-                            {bio?.COUNTRY}
-                        </div>
-                        <div>
-                            <span className="block text-xs uppercase tracking-widest text-court-muted mb-1">Draft</span>
-                            {bio?.DRAFT_YEAR} (R{bio?.DRAFT_ROUND} P{bio?.DRAFT_NUMBER})
-                        </div>
-                    </div>
-
-                    {playerId && <PlayerIntel playerId={playerId} />}
-                </div>
-
-                {/* Next Game */}
-                <div className="w-full md:w-72 bg-court-bg border border-court-border rounded-lg p-4">
-                    <h3 className="text-court-orange text-xs font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
-                        <Calendar size={14} /> Next Matchup
-                    </h3>
-                    {next_game ? (
-                        <div>
-                            {/* Opponent team */}
-                            <div className="text-xl md:text-2xl font-display text-court-text mb-1">
-                                {next_game.is_home ? 'vs' : '@'} {next_game.opp_abbreviation || next_game.opp_name || 'Opponent'}
-                            </div>
-                            <div className="text-court-subtext font-mono text-xs mb-3">
-                                {next_game.date} · {next_game.is_home ? 'HOME' : 'AWAY'}
-                            </div>
-
-                            {/* Key matchup player */}
-                            {key_matchup && (
-                                <div className="border-t border-court-border pt-3">
-                                    <div className="text-court-muted font-mono text-xs uppercase tracking-widest mb-2">
-                                        Key Matchup
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <img
-                                            src={key_matchup.headshot_url}
-                                            alt={key_matchup.name}
-                                            className="w-10 h-10 rounded-full object-cover object-top border border-court-border bg-court-surface"
-                                            onError={(e) => { e.target.style.display = 'none' }}
-                                        />
-                                        <div>
-                                            <div className="text-court-text font-semibold text-sm truncate w-32">
-                                                {key_matchup.name}
-                                            </div>
-                                            <div className="text-court-subtext font-mono text-xs">
-                                                {key_matchup.position} · #{key_matchup.jersey}
+                        {next_game ? (
+                            <div className="p-4">
+                                <div className="text-2xl font-display text-court-text leading-none mb-0.5">
+                                    {next_game.is_home ? 'vs' : '@'} {next_game.opp_abbreviation || '---'}
+                                </div>
+                                <div className="text-[10px] font-mono text-court-muted mb-1 truncate">{next_game.opp_name}</div>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <span className="text-[10px] font-mono text-court-subtext">{next_game.date}</span>
+                                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold font-mono ${next_game.is_home ? 'bg-emerald-500/10 text-emerald-400' : 'bg-blue-500/10 text-blue-400'}`}>
+                                        {next_game.is_home ? 'HOME' : 'AWAY'}
+                                    </span>
+                                </div>
+                                {key_matchup && (
+                                    <div className="border-t border-court-border/50 pt-3">
+                                        <div className="text-[9px] font-mono uppercase tracking-widest text-court-muted mb-2">Key Matchup</div>
+                                        <div className="flex items-center gap-2.5">
+                                            <img
+                                                src={key_matchup.headshot_url}
+                                                alt={key_matchup.name}
+                                                className="w-9 h-9 rounded-full object-cover object-top border border-court-border bg-court-surface shrink-0"
+                                                onError={(e) => { e.target.style.display = 'none'; }}
+                                            />
+                                            <div className="min-w-0">
+                                                <div className="text-xs font-mono font-semibold text-court-text truncate">{key_matchup.name}</div>
+                                                <div className="text-[10px] font-mono text-court-muted">{key_matchup.position} · #{key_matchup.jersey}</div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
-                        </div>
-                    ) : (
-                        <div className="text-court-subtext font-mono text-sm italic">TBD</div>
-                    )}
+                                )}
+                            </div>
+                        ) : (
+                            <div className="p-4 text-court-muted font-mono text-xs italic">No upcoming game found</div>
+                        )}
+                    </div>
                 </div>
-
             </div>
         </div>
     );
